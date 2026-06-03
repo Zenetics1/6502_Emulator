@@ -6,7 +6,7 @@
 
     typedef struct
     {
-        //REGISTERS
+        //Status Register Flag Bits
         #define FLAG_CARRY (1 << 0);
         #define FLAG_ZERO (1 << 1);
         #define FLAG_INTERUPPT_DISABLE (1 << 2);
@@ -16,12 +16,13 @@
         #define FLAG_OVERFLOW (1 << 6);
         #define FLAG_NEGATIVE (1 << 7);
 
-        uint8_t A;
-        uint8_t S;
-        uint8_t X;
-        uint8_t Y;
-        uint8_t P; 
-        uint16_t PC;
+        uint8_t A; //Main math register, one of the values must be here during ALU operations, often holds final result
+        uint8_t S; //LIFO, 
+        //General Purpose helper register, focuses on memory indexing
+        uint8_t X; //Holds loop counters or memory offset
+        uint8_t Y; //Similar to x reigister, but Indirect indexed Addressing is exclusive to this
+        uint8_t P; //Status Register, remembers most recent calculation result with individual flags
+        uint16_t PC; //Program Counter, determine the next instruction for cpu
 
         //State
         uint8_t IR; //Instruction Register
@@ -34,8 +35,9 @@
         
     } MOS6502;
     
+    void CLOCK(MOS6502 *cpu);
 
-
+    uint8_t opcode_execute(MOS6502 *cpu, uint8_t IR_OPCODE);
 
     // typedef struct
     // {   

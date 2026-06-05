@@ -4,18 +4,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
+//Status Register Flag Bits
+#define FLAG_CARRY (1 << 0);
+#define FLAG_ZERO (1 << 1);
+#define FLAG_INTERUPPT_DISABLE (1 << 2);
+#define FLAG_BREAK (1 << 3);
+#define FLAG_DECIMAL (1 << 4);
+#define FLAG_UNUSED (1 << 5);
+#define FLAG_OVERFLOW (1 << 6);
+#define FLAG_NEGATIVE (1 << 7);
+
     typedef struct
     {
-        //Status Register Flag Bits
-        #define FLAG_CARRY (1 << 0);
-        #define FLAG_ZERO (1 << 1);
-        #define FLAG_INTERUPPT_DISABLE (1 << 2);
-        #define FLAG_BREAK (1 << 3);
-        #define FLAG_DECIMAL (1 << 4);
-        #define FLAG_UNUSED (1 << 5);
-        #define FLAG_OVERFLOW (1 << 6);
-        #define FLAG_NEGATIVE (1 << 7);
-
         uint8_t A; //Main math register, one of the values must be here during ALU operations, often holds final result
         uint8_t S; //LIFO, 
         //General Purpose helper register, focuses on memory indexing
@@ -27,6 +28,12 @@
         //State
         uint8_t IR; //Instruction Register
         uint8_t cycles_left; //Timing state Ring
+        uint8_t cycle_steps; //Sub-cycle counter for instructions
+
+        //Internal Registers, replicating micro architecture addressing modes
+        uint8_t low_byte;
+        uint8_t high_byte;
+        uint16_t full_address;
 
         //Pins
         uint16_t address_pin;
@@ -35,46 +42,35 @@
         
     } MOS6502;
     
-    void CLOCK(MOS6502 *cpu);
+    typedef struct
+    {
+        const char* opcode_name;
+        void (*op_func)(MOS6502 *cpu);
+        uint8_t total_cycles;
+    } Opcode_Entry;
+    
+    extern const Opcode_Entry LUT[256];
 
+    //CPU Clock 
+    void CLOCK(MOS6502 *cpu);
+    //Opcode execution
     uint8_t opcode_execute(MOS6502 *cpu, uint8_t IR_OPCODE);
 
-    // typedef struct
-    // {   
-    //     uint8_t A;
-    //     uint8_t S;
-    //     uint8_t X;
-    //     uint8_t Y;
+    //Addressing Modes:
+    bool mode_implied(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_accumulator(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_immediate(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_absolute(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_absolute_x(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_absolute_y(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_zero_page(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_zero_page_x(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_zero_page_y(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_relative(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_indirect(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_indexed_indirect_x(MOS6502 *cpu, uint16_t* o_address);
+    bool mode_indirect_indexed_y(MOS6502 *cpu, uint16_t* o_address);
 
-    //     typedef union 
-    //     {
-    //        uint8_t RAW_P;
-    //        typedef struct 
-    //        {
-    //             uint8_t n : 1;
-    //             uint8_t v : 1;
-    //             uint8_t b : 1;
-    //             uint8_t d : 1;
-    //             uint8_t i : 1;
-    //             uint8_t z : 1;
-    //             uint8_t c : 1;
-    //        } FLAGS;
-           
-    //     } P;
-
-    //     typedef union 
-    //     {
-    //         uint16_t RAW_PC;
-    //         typedef struct
-    //         {
-    //             uint8_t PC_LOWER;
-    //             uint8_t PC_UPPER;
-    //         } PC_BYTES;
-            
-    //     } PC;
-        
-        
-    // } 6502_REGISTERS;
-    
-    
+    //Instructions:
+    void LDA(MOS6502 *cpu, uint16_t address, uint8_t last_cycle);
 #endif

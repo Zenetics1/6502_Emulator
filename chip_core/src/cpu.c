@@ -18,6 +18,21 @@ void CLOCK(MOS6502 *cpu){
     }
 }
 
-uint8_t opcode_execute(MOS6502 *cpu, uint8_t IR_OPCODE){
+void update_Z_N_flags(MOS6502 *cpu, uint8_t reg_result){
+    if(reg_result == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+
+    if((reg_result & 0x80) != 0){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+
+
+uint8_t Instr_execute(MOS6502 *cpu, uint8_t IR_OPCODE){
     //TODO: implement MUX for decoding and understand what each opcode is and where it goes.
 }

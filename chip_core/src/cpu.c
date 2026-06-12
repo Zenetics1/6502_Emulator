@@ -1,20 +1,16 @@
 #include "include/cpu.h"
-
+#include "src/memory.c"
 void CLOCK(MOS6502 *cpu){
     if(cpu->cycles_left == 0){
-        cpu->IR = cpu->data_pin;
+        cpu->IR = read_mem(cpu->PC++);
         
-        opcode_execute(cpu, cpu->IR);
+        cpu->cycles_left += LUT[cpu->IR].total_cycles;
+
+        cpu->cycles_left += LUT[cpu->IR].op_func(cpu);
     }
 
     if(cpu->cycles_left > 0){
         cpu->cycles_left--;
-    }
-
-    if(cpu->cycles_left == 0){
-        cpu->address_pin = cpu->PC;
-        cpu->read_write = true;
-        cpu->PC++;
     }
 }
 
@@ -30,9 +26,4 @@ void update_Z_N_flags(MOS6502 *cpu, uint8_t reg_result){
     } else{
         cpu->P &= ~FLAG_NEGATIVE;
     }
-}
-
-
-uint8_t Instr_execute(MOS6502 *cpu, uint8_t IR_OPCODE){
-    //TODO: implement MUX for decoding and understand what each opcode is and where it goes.
 }

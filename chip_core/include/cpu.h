@@ -28,12 +28,7 @@
         //State
         uint8_t IR; //Instruction Register
         uint8_t cycles_left; //Timing state Ring
-
-        //Internal Registers, replicating micro architecture addressing modes
-        uint8_t low_byte;
-        uint8_t high_byte;
-        uint16_t full_address;
-        
+      
     } MOS6502;
     
     typedef struct
@@ -60,11 +55,10 @@
     uint16_t Absolute_Mode(MOS6502 *cpu);
     uint16_t AbsoluteX_Mode(MOS6502 *cpu);
     uint16_t AbsoluteY_Mode(MOS6502 *cpu);
-    uint16_t Relative_Mode(MOS6502 *cpu);
     uint16_t Absolute_Indirect_Mode(MOS6502 *cpu);
+    uint16_t Relative_Mode(MOS6502 *cpu);
     uint16_t Indexed_Indirect_Mode(MOS6502 *cpu);
     uint16_t Indirect_Indexed_Mode(MOS6502 * cpu);
-
 
 
     /*Implied Opcode*/

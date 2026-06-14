@@ -47,6 +47,7 @@
     //Update Z/N Flags
     void update_Z_N_flags(MOS6502 *cpu, uint8_t reg_result);
 
+    /*Addressing Mode Helper Functions*/
     //Implied and Accumulator Addressing modes do not target address, no functions needed
     uint16_t Immediate_Mode(MOS6502 *cpu);
     uint16_t Zero_Page_Mode(MOS6502 *cpu);
@@ -59,6 +60,14 @@
     uint16_t Relative_Mode(MOS6502 *cpu);
     uint16_t Indexed_Indirect_Mode(MOS6502 *cpu);
     uint16_t Indirect_Indexed_Mode(MOS6502 * cpu);
+
+
+    /*Instruction Helper Functions*/
+    void LDA(MOS6502 *cpu, uint16_t address);
+    void LDX(MOS6502 *cpu, uint16_t address);
+    void LDY(MOS6502 *cpu, uint16_t address);
+    void LSR(MOS6502 *cpu, uint16_t address);
+
 
 
     /*Implied Opcode*/

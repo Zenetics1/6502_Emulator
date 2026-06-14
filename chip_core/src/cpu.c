@@ -103,3 +103,59 @@ uint16_t Indirect_Indexed_Mode(MOS6502 * cpu){
     }
     return effective_address;
 }
+
+void LDA(MOS6502 *cpu, uint16_t address){
+        cpu->A = read_mem(address);
+        if(cpu->A == 0){
+            cpu->P |= FLAG_ZERO;
+        } else {
+            cpu->P &= ~FLAG_ZERO;
+        }
+        if(cpu->A & 0x80){
+            cpu->P |= FLAG_NEGATIVE;
+        } else {
+            cpu->P &= ~FLAG_NEGATIVE;
+        }
+}
+void LDX(MOS6502 *cpu, uint16_t address){
+        cpu->X = read_mem(address);
+        if(cpu->X == 0){
+            cpu->P |= FLAG_ZERO;
+        } else {
+            cpu->P &= ~FLAG_ZERO;
+        }
+        if(cpu->X & 0x80){
+            cpu->P |= FLAG_NEGATIVE;
+        } else {
+            cpu->P &= ~FLAG_NEGATIVE;
+        }
+}
+void LDY(MOS6502 *cpu, uint16_t address){
+        cpu->Y = read_mem(address);
+        if(cpu->Y == 0){
+            cpu->P |= FLAG_ZERO;
+        } else {
+            cpu->P &= ~FLAG_ZERO;
+        }
+        if(cpu->Y & 0x80){
+            cpu->P |= FLAG_NEGATIVE;
+        } else {
+            cpu->P &= ~FLAG_NEGATIVE;
+        }
+}
+void LSR(MOS6502 *cpu){
+    if(cpu->A & 0x01){
+        cpu->P |= FLAG_CARRY;
+    } else {
+        cpu->P &= ~FLAG_CARRY;
+    }
+    cpu->A >>= 1;
+
+    if(cpu->A == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+
+    cpu->P &= ~FLAG_NEGATIVE;
+}

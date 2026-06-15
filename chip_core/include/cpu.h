@@ -6,20 +6,19 @@
 
 
 //Status Register Flag Bits
-#define FLAG_CARRY (1 << 0);
-#define FLAG_ZERO (1 << 1);
-#define FLAG_INTERUPPT_DISABLE (1 << 2);
-#define FLAG_BREAK (1 << 3);
-#define FLAG_DECIMAL (1 << 4);
-#define FLAG_UNUSED (1 << 5);
-#define FLAG_OVERFLOW (1 << 6);
-#define FLAG_NEGATIVE (1 << 7);
+#define FLAG_CARRY (1 << 0)
+#define FLAG_ZERO (1 << 1)
+#define FLAG_INTERUPT_DISABLE (1 << 2)
+#define FLAG_BREAK (1 << 3)
+#define FLAG_DECIMAL (1 << 4)
+#define FLAG_UNUSED (1 << 5)
+#define FLAG_OVERFLOW (1 << 6)
+#define FLAG_NEGATIVE (1 << 7)
 
     typedef struct
     {
         uint8_t A; //Main math register, one of the values must be here during ALU operations, often holds final result
-        uint8_t S; //LIFO, 
-        //General Purpose helper register, focuses on memory indexing
+        uint8_t S; //LIFO, General Purpose helper register, focuses on memory indexing
         uint8_t X; //Holds loop counters or memory offset
         uint8_t Y; //Similar to x reigister, but Indirect indexed Addressing is exclusive to this
         uint8_t P; //Status Register, remembers most recent calculation result with individual flags
@@ -59,14 +58,40 @@
     uint16_t Absolute_Indirect_Mode(MOS6502 *cpu);
     uint16_t Relative_Mode(MOS6502 *cpu);
     uint16_t Indexed_Indirect_Mode(MOS6502 *cpu);
-    uint16_t Indirect_Indexed_Mode(MOS6502 * cpu);
+    uint16_t Indirect_Indexed_Mode(MOS6502 *cpu);
 
 
     /*Instruction Helper Functions*/
-    void LDA(MOS6502 *cpu, uint16_t address);
-    void LDX(MOS6502 *cpu, uint16_t address);
-    void LDY(MOS6502 *cpu, uint16_t address);
-    void LSR(MOS6502 *cpu, uint16_t address);
+    void LDA(MOS6502 *cpu, uint16_t address); //Load Accumulator
+    void LDX(MOS6502 *cpu, uint16_t address); //Load X Register
+    void LDY(MOS6502 *cpu, uint16_t address); //Load Y Register
+    void LSR(MOS6502 *cpu, uint16_t address); //Logical Shift Right
+    void STA(MOS6502 *cpu, uint16_t address); //Store Accumulator
+    void STX(MOS6502 *cpu, uint16_t address); //Store X Register
+    void STY(MOS6502 *cpu, uint16_t address); //Store Y Register
+    void TAX(MOS6502 *cpu); //Transfer Accumulator to X
+    void TAY(MOS6502 *cpu); //Transfer Accumulator to Y
+    void TXA(MOS6502 *cpu); //Transfer X to Accumulator
+    void TYA(MOS6502 *cpu); //Transfer T to Accumulator
+    void TSX(MOS6502 *cpu); //Transfer Stack Pointer to X
+    void TXS(MOS6502 *cpu); //Transfer X to Stack Pointer 
+    void PHA(MOS6502 *cpu); //Push Accumulator
+    void PHP(MOS6502 *cpu); //Push Processor Status
+    void PLA(MOS6502 *cpu); //Pull Accumulator
+    void PLP(MOS6502 *cpu); //Push Prcoessor Status
+    void AND(MOS6502 *cpu, uint16_t address); //Logical AND
+    void EOR(MOS6502 *cpu, uint16_t address); //Exclusive OR
+    void ORA(MOS6502 *cpu, uint16_t address); //Logical Inclusive OR
+    void BIT(MOS6502 *cpu, uint16_t address); //Bit test
+    void CLC(MOS6502 *cpu); //Clear carry flag
+    void CLD(MOS6502 *cpu); //Clear decimal mode flag
+    void CLI(MOS6502 *cpu); //Clear interrupt disable flag
+    void CLV(MOS6502 *cpu); //Clear overflow flag
+    void SEC(MOS6502 *cpu); //Set carry flag
+    void SED(MOS6502 *cpu); //Set decimal mode flag
+    void SEI(MOS6502 *cpu); //Set interrupt disable flags
+    
+
 
 
 

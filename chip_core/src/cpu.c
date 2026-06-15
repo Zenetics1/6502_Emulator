@@ -159,3 +159,203 @@ void LSR(MOS6502 *cpu){
 
     cpu->P &= ~FLAG_NEGATIVE;
 }
+void STA(MOS6502 *cpu, uint16_t address){
+    write_mem(address, cpu->A);
+}
+void STX(MOS6502 *cpu, uint16_t address){
+    write_mem(address, cpu->X);
+}
+void STY(MOS6502 *cpu, uint16_t address){
+    write_mem(address, cpu->Y);
+}
+void TAX(MOS6502 *cpu){
+    cpu->X = cpu->A;
+    if(cpu->X == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->X & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+
+}
+void TAY(MOS6502 *cpu){
+    cpu->Y = cpu->A;
+    if(cpu->Y == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->Y & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void TXA(MOS6502 *cpu){
+    cpu->A = cpu->X;
+    if(cpu->A == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->A & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void TYA(MOS6502 *cpu){
+ cpu->A = cpu->Y;
+    if(cpu->A == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->A & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void TSX(MOS6502 *cpu){
+    cpu->X = cpu->S;
+    if(cpu->X == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->X & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void TXS(MOS6502 *cpu){
+    cpu->S = cpu->X;
+    if(cpu->S == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->S & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+
+void PHA(MOS6502 *cpu){
+    uint16_t stack_address = 0x0100 | cpu->S;
+    write_mem(stack_address, cpu->A);
+    cpu->S--;
+} 
+void PHP(MOS6502 *cpu){
+    uint16_t stack_address = 0x0100 | cpu->S;
+    write_mem(stack_address, cpu->P);
+    cpu->S--;
+}
+void PLA(MOS6502 *cpu){
+    cpu->S++;
+    uint16_t stack_address = 0x0100 | cpu->S;
+    cpu->A = read_mem(stack_address);
+    if(cpu->A == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->A & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void PLP(MOS6502 *cpu){
+    cpu->S++;
+    uint16_t stack_address = 0x0100 | cpu->S;
+    cpu->P = (read_mem(stack_address) & ~FLAG_BREAK) | FLAG_UNUSED;
+}
+void AND(MOS6502 *cpu, uint16_t address){
+    uint8_t content = read_mem(address);
+    cpu->A &= content;
+    if(cpu->A == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->A & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void EOR(MOS6502 *cpu, uint16_t address){
+    uint8_t content = read_mem(address);
+    cpu->A ^= content;
+    if(cpu->A == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->A & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void ORA(MOS6502 *cpu, uint16_t address){
+    uint8_t content = read_mem(address);
+    cpu->A |= content;
+    if(cpu->A == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->A & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void BIT(MOS6502 *cpu, uint16_t address){
+    uint8_t content = read_mem(address);
+    if((cpu->A & content) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else {
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(content & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else {
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+    if(content & 0x40){
+        cpu->P |= FLAG_OVERFLOW;
+    } else {
+        cpu->P &= ~FLAG_OVERFLOW;
+    }
+}
+void CLC(MOS6502 *cpu){
+    cpu->P &= ~FLAG_CARRY;
+}    
+void CLD(MOS6502 *cpu){
+    cpu->P &= ~FLAG_DECIMAL;    
+}
+void CLI(MOS6502 *cpu){
+    cpu->P &= ~FLAG_INTERUPT_DISABLE;
+}
+void CLV(MOS6502 *cpu){
+    cpu->P &= ~FLAG_OVERFLOW;
+}
+void SEC(MOS6502 *cpu){
+    cpu->P |= FLAG_CARRY;
+}
+void SED(MOS6502 *cpu){
+    cpu->P |= FLAG_DECIMAL;
+}
+void SEI(MOS6502 *cpu){
+    cpu->P |= FLAG_INTERUPT_DISABLE;
+}

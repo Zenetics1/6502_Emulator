@@ -15,6 +15,8 @@
 #define FLAG_OVERFLOW (1 << 6)
 #define FLAG_NEGATIVE (1 << 7)
 
+#define IQR_Interrupt_Vector 0xFFFE
+
     typedef struct
     {
         uint8_t A; //Main math register, one of the values must be here during ALU operations, often holds final result
@@ -69,20 +71,24 @@
     void STA(MOS6502 *cpu, uint16_t address); //Store Accumulator
     void STX(MOS6502 *cpu, uint16_t address); //Store X Register
     void STY(MOS6502 *cpu, uint16_t address); //Store Y Register
+    
     void TAX(MOS6502 *cpu); //Transfer Accumulator to X
     void TAY(MOS6502 *cpu); //Transfer Accumulator to Y
     void TXA(MOS6502 *cpu); //Transfer X to Accumulator
     void TYA(MOS6502 *cpu); //Transfer T to Accumulator
     void TSX(MOS6502 *cpu); //Transfer Stack Pointer to X
     void TXS(MOS6502 *cpu); //Transfer X to Stack Pointer 
+
     void PHA(MOS6502 *cpu); //Push Accumulator
     void PHP(MOS6502 *cpu); //Push Processor Status
     void PLA(MOS6502 *cpu); //Pull Accumulator
     void PLP(MOS6502 *cpu); //Push Prcoessor Status
+
     void AND(MOS6502 *cpu, uint16_t address); //Logical AND
     void EOR(MOS6502 *cpu, uint16_t address); //Exclusive OR
     void ORA(MOS6502 *cpu, uint16_t address); //Logical Inclusive OR
     void BIT(MOS6502 *cpu, uint16_t address); //Bit test
+
     void CLC(MOS6502 *cpu); //Clear carry flag
     void CLD(MOS6502 *cpu); //Clear decimal mode flag
     void CLI(MOS6502 *cpu); //Clear interrupt disable flag
@@ -90,9 +96,41 @@
     void SEC(MOS6502 *cpu); //Set carry flag
     void SED(MOS6502 *cpu); //Set decimal mode flag
     void SEI(MOS6502 *cpu); //Set interrupt disable flags
-    
 
+    void ADC(MOS6502 *cpu, uint16_t address); //Add with Carry
+    void SBC(MOS6502 *cpu, uint16_t address); //Subtract with Carry
+    void CMP(MOS6502 *cpu, uint16_t address); //Compare Accumulator
+    void CPX(MOS6502 *cpu, uint16_t address); //Compare X register
+    void CPY(MOS6502 *cpu, uint16_t address); //Compare Y register
 
+    void INC(MOS6502 *cpu, uint16_t address); //Increment a memory location
+    void INX(MOS6502 *cpu, uint16_t address); //Increment the X register
+    void INY(MOS6502 *cpu, uint16_t address); //Increment the Y register
+    void DEC(MOS6502 *cpu, uint16_t address); //Decrement a memory location
+    void DEX(MOS6502 *cpu, uint16_t address); //Decrement the X register
+    void DEY(MOS6502 *cpu, uint16_t address); //Decrement the Y register
+
+    void ASL(MOS6502 *cpu, uint16_t address); //Arithmetic Shift Left
+    void LSR(MOS6502 *cpu, uint16_t address); //Logical Shift Right
+    void ROL(MOS6502 *cpu, uint16_t address); //Rotate Left
+    void ROR(MOS6502 *cpu, uint16_t address); //Rotate Right
+
+    void JMP(MOS6502 *cpu, uint16_t address); //Jump to another location
+    void JSR(MOS6502 *cpu, uint16_t address); //Jump to subroutine
+    void RTS(MOS6502 *cpu, uint16_t address); //Return from subroutine
+
+    void BCC(MOS6502 *cpu, uint16_t address); //Branch if carry flag clear
+    void BCS(MOS6502 *cpu, uint16_t address); //Branch if carry flag set
+    void BEQ(MOS6502 *cpu, uint16_t address); //Branch if zero flag set
+    void BMI(MOS6502 *cpu, uint16_t address); //Branch if negative flag set
+    void BNE(MOS6502 *cpu, uint16_t address); //Branch if zero flag clear
+    void BPL(MOS6502 *cpu, uint16_t address); //Branch if neagtive flag clear
+    void BVC(MOS6502 *cpu, uint16_t address); //Branch if overflow flag clear
+    void BVS(MOS6502 *cpu, uint16_t address); //Branch if overflow flag set
+
+    void BRK(MOS6502 *cpu, uint16_t address); //Force and interrupt
+    void NOP(MOS6502 *cpu, uint16_t address); //No Operation
+    void RTI(MOS6502 *cpu, uint16_t address); //Return from Interrupt
 
 
     /*Implied Opcode*/

@@ -359,3 +359,39 @@ void SED(MOS6502 *cpu){
 void SEI(MOS6502 *cpu){
     cpu->P |= FLAG_INTERUPT_DISABLE;
 }
+
+
+void BRK(MOS6502 *cpu, uint16_t address){
+    cpu->PC += 2;
+    uint16_t stack_address = 0x0100 | cpu->S;
+    write_mem(stack_address, (cpu->PC >> 8) & 0xFF);
+    cpu->S--;
+    stack_address =  0x0100 | cpu->S;
+    write_mem(stack_address, (cpu->PC & 0xFF ));
+    cpu->S--;
+    stack_address =  0x0100 | cpu->S;
+    write_mem(stack_address, cpu->P | FLAG_BREAK | FLAG_UNUSED);
+    cpu->S--;
+
+    cpu->P |= FLAG_INTERUPT_DISABLE;
+    uint8_t low_byte = read_mem(0xFFFE);
+    uint8_t high_byte = read_mem(0xFFFF);
+    cpu->PC = (high_byte << 8) | low_byte; 
+    
+}
+void NOP(MOS6502 *cpu, uint16_t address){
+    //No Program needed, PC is already handled
+}
+void RTI(MOS6502 *cpu, uint16_t address){
+    cpu->S++;
+    uint16_t stack_address = 0x0100 | cpu->S;
+    cpu->P = (read_mem(stack_address) & ~FLAG_BREAK) | FLAG_UNUSED;
+    cpu->S++;
+    stack_address =  0x0100 | cpu->S;
+    uint8_t low_byte = read_mem(stack_address);
+    cpu->S++;
+    stack_address =  0x0100 | cpu->S;
+    uint8_t high_byte = read_mem(stack_address);
+
+    cpu->PC = (high_byte << 8) | low_byte;
+}

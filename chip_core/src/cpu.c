@@ -395,3 +395,51 @@ void RTI(MOS6502 *cpu, uint16_t address){
 
     cpu->PC = (high_byte << 8) | low_byte;
 }
+bool BCC(MOS6502 *cpu){
+    if((cpu->P & 0x01) == 0){
+        return true;
+    }
+    return false;
+} 
+bool BCS(MOS6502 *cpu){
+    if((cpu->P & 0x01) != 0){
+        return true;
+    }
+    return false;
+}
+bool BEQ(MOS6502 *cpu){
+    if((cpu->P & 0x02) != 0){
+        return true;
+    }
+    return false;
+} 
+bool BMI(MOS6502 *cpu){
+    if((cpu->P & 0x80) != 0){
+        return true;
+    }
+    return false;
+} 
+bool BNE(MOS6502 *cpu){
+    if((cpu->P & 0x02) == 0){
+        return true;
+    }
+    return false;
+} 
+bool BPL(MOS6502 *cpu){
+    if((cpu->P & 0x80) == 0){
+        return true;
+    }
+    return false;
+} 
+bool BVC(MOS6502 *cpu){
+    if((cpu->P & 0x40) == 0){
+        return true;
+    }
+    return false;
+} 
+bool BVS(MOS6502 *cpu){
+    if((cpu->P & 0x40) != 0){
+        return true;
+    }
+    return false;    
+} 

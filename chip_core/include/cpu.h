@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-
 //Status Register Flag Bits
 #define FLAG_CARRY (1 << 0)
 #define FLAG_ZERO (1 << 1)
@@ -119,14 +118,14 @@
     void JSR(MOS6502 *cpu, uint16_t address); //Jump to subroutine
     void RTS(MOS6502 *cpu, uint16_t address); //Return from subroutine
 
-    void BCC(MOS6502 *cpu, uint16_t address); //Branch if carry flag clear
-    void BCS(MOS6502 *cpu, uint16_t address); //Branch if carry flag set
-    void BEQ(MOS6502 *cpu, uint16_t address); //Branch if zero flag set
-    void BMI(MOS6502 *cpu, uint16_t address); //Branch if negative flag set
-    void BNE(MOS6502 *cpu, uint16_t address); //Branch if zero flag clear
-    void BPL(MOS6502 *cpu, uint16_t address); //Branch if neagtive flag clear
-    void BVC(MOS6502 *cpu, uint16_t address); //Branch if overflow flag clear
-    void BVS(MOS6502 *cpu, uint16_t address); //Branch if overflow flag set
+    bool BCC(MOS6502 *cpu); //Branch if carry flag clear
+    bool BCS(MOS6502 *cpu); //Branch if carry flag set
+    bool BEQ(MOS6502 *cpu); //Branch if zero flag set
+    bool BMI(MOS6502 *cpu); //Branch if negative flag set
+    bool BNE(MOS6502 *cpu); //Branch if zero flag clear
+    bool BPL(MOS6502 *cpu); //Branch if neagtive flag clear
+    bool BVC(MOS6502 *cpu); //Branch if overflow flag clear
+    bool BVS(MOS6502 *cpu); //Branch if overflow flag set
 
     void BRK(MOS6502 *cpu, uint16_t address); //Force and interrupt
     void NOP(MOS6502 *cpu, uint16_t address); //No Operation

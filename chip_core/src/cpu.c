@@ -443,3 +443,112 @@ bool BVS(MOS6502 *cpu){
     }
     return false;    
 } 
+void ADC(MOS6502 *cpu, uint16_t address){
+    uint8_t operand = read_mem(address);
+    uint16_t sum = cpu->A + operand + (cpu->P & FLAG_CARRY);
+    if((sum & 0xFF) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if((sum & 0x80)){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+    if(sum > 0xFF){
+        cpu->P |= FLAG_CARRY;
+    } else{
+        cpu->P &= ~FLAG_CARRY;
+    }
+    if(~(cpu->A ^ read_mem(address)) & (cpu->A ^ sum) & 0x80){
+        cpu->P |= FLAG_OVERFLOW;
+    } else{
+        cpu->P &= ~FLAG_OVERFLOW;
+    }
+
+    cpu->A = (uint8_t)(sum & 0xFF);
+} //Add with Carry
+void SBC(MOS6502 *cpu, uint16_t address){
+    uint8_t operand = read_mem(address);
+    uint16_t sum = cpu->A + (~operand) + (cpu->P & FLAG_CARRY);
+    if((sum & 0xFF) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if((sum & 0x80)){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+    if(sum > 0xFF){
+        cpu->P |= FLAG_CARRY;
+    } else{
+        cpu->P &= FLAG_CARRY;
+    }
+    if((cpu->A ^ ~operand) & (cpu->A ^ sum) & 0x80){
+        cpu->P |= FLAG_OVERFLOW;
+    } else{
+        cpu->P &= ~FLAG_OVERFLOW;
+    }
+
+    cpu->A = (uint8_t)(sum & 0xFF);
+} //Subtract with Carry
+void CMP(MOS6502 *cpu, uint16_t address){
+    uint8_t operand = read_mem(address);
+
+    if(cpu->A >= operand){
+        cpu->P |= FLAG_CARRY;
+    } else{
+        cpu->P &= ~FLAG_CARRY;
+    }
+    if(cpu->A == operand){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if((cpu->A - operand) & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void CPX(MOS6502 *cpu, uint16_t address){
+    uint8_t operand = read_mem(address);
+
+    if(cpu->X >= operand){
+        cpu->P |= FLAG_CARRY;
+    } else{
+        cpu->P &= ~FLAG_CARRY;
+    }
+    if(cpu->X == operand){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if((cpu->X - operand) & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void CPY(MOS6502 *cpu, uint16_t address){
+    uint8_t operand = read_mem(address);
+
+    if(cpu->Y >= operand){
+        cpu->P |= FLAG_CARRY;
+    } else{
+        cpu->P &= ~FLAG_CARRY;
+    }
+    if(cpu->Y == operand){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if((cpu->Y - operand) & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}

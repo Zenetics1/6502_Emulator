@@ -103,11 +103,11 @@
     void CPY(MOS6502 *cpu, uint16_t address); //Compare Y register
 
     void INC(MOS6502 *cpu, uint16_t address); //Increment a memory location
-    void INX(MOS6502 *cpu, uint16_t address); //Increment the X register
-    void INY(MOS6502 *cpu, uint16_t address); //Increment the Y register
+    void INX(MOS6502 *cpu); //Increment the X register
+    void INY(MOS6502 *cpu); //Increment the Y register
     void DEC(MOS6502 *cpu, uint16_t address); //Decrement a memory location
-    void DEX(MOS6502 *cpu, uint16_t address); //Decrement the X register
-    void DEY(MOS6502 *cpu, uint16_t address); //Decrement the Y register
+    void DEX(MOS6502 *cpu); //Decrement the X register
+    void DEY(MOS6502 *cpu); //Decrement the Y register
 
     void ASL(MOS6502 *cpu, uint16_t address); //Arithmetic Shift Left
     void LSR(MOS6502 *cpu, uint16_t address); //Logical Shift Right

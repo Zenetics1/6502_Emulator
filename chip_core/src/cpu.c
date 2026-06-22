@@ -552,3 +552,84 @@ void CPY(MOS6502 *cpu, uint16_t address){
         cpu->P &= ~FLAG_NEGATIVE;
     }
 }
+void INC(MOS6502 *cpu, uint16_t address){
+    uint8_t sum = read_mem(address) + 1;
+    write_mem(address, sum);
+    if((sum & 0xFF) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(sum & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void INX(MOS6502 *cpu){
+    cpu->X += 1;
+    if((cpu->X & 0xFF) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->X & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void INY(MOS6502 *cpu){
+    cpu->Y += 1;
+    if((cpu->Y & 0xFF) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->Y & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void DEC(MOS6502 *cpu, uint16_t address){
+    uint8_t sum = read_mem(address) - 1;
+    write_mem(address, sum);
+    if((sum & 0xFF) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(sum & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void DEX(MOS6502 *cpu){
+    cpu->X -= 1;
+    if((cpu->X & 0xFF) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->X & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+void DEY(MOS6502 *cpu){
+    cpu->Y -= 1;
+    if((cpu->Y & 0xFF) == 0){
+        cpu->P |= FLAG_ZERO;
+    } else{
+        cpu->P &= ~FLAG_ZERO;
+    }
+    if(cpu->Y & 0x80){
+        cpu->P |= FLAG_NEGATIVE;
+    } else{
+        cpu->P &= ~FLAG_NEGATIVE;
+    }
+}
+

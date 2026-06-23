@@ -28,13 +28,16 @@
         //State
         uint8_t IR; //Instruction Register
         uint8_t cycles_left; //Timing state Ring
-      
+        bool branch_result; //Result written by branch instruction functions
+        bool accumulator_mode; //Set by addr_func to signal shift instructions use accumulator
+
     } MOS6502;
     
     typedef struct
     {
         const char* opcode_name;
-        uint8_t (*op_func)(MOS6502 *cpu); //Writes result to memory, returns additional cycles for cpu clock
+        void (*op_func)(MOS6502 *, uint16_t); //Writes result to memory, returns additional cycles for cpu clock
+        uint16_t (*addr_func)(MOS6502*);
         uint8_t total_cycles;
     } Opcode_Entry;
     
@@ -43,9 +46,6 @@
 
     //CPU Clock 
     void CLOCK(MOS6502 *cpu);
-
-    //Update Z/N Flags
-    void update_Z_N_flags(MOS6502 *cpu, uint8_t reg_result);
 
     /*Addressing Mode Helper Functions*/
     //Implied and Accumulator Addressing modes do not target address, no functions needed
@@ -71,30 +71,30 @@
     void STX(MOS6502 *cpu, uint16_t address); //Store X Register
     void STY(MOS6502 *cpu, uint16_t address); //Store Y Register
     
-    void TAX(MOS6502 *cpu); //Transfer Accumulator to X
-    void TAY(MOS6502 *cpu); //Transfer Accumulator to Y
-    void TXA(MOS6502 *cpu); //Transfer X to Accumulator
-    void TYA(MOS6502 *cpu); //Transfer T to Accumulator
-    void TSX(MOS6502 *cpu); //Transfer Stack Pointer to X
-    void TXS(MOS6502 *cpu); //Transfer X to Stack Pointer 
+    void TAX(MOS6502 *cpu, uint16_t address); //Transfer Accumulator to X
+    void TAY(MOS6502 *cpu, uint16_t address); //Transfer Accumulator to Y
+    void TXA(MOS6502 *cpu, uint16_t address); //Transfer X to Accumulator
+    void TYA(MOS6502 *cpu, uint16_t address); //Transfer T to Accumulator
+    void TSX(MOS6502 *cpu, uint16_t address); //Transfer Stack Pointer to X
+    void TXS(MOS6502 *cpu, uint16_t address); //Transfer X to Stack Pointer
 
-    void PHA(MOS6502 *cpu); //Push Accumulator
-    void PHP(MOS6502 *cpu); //Push Processor Status
-    void PLA(MOS6502 *cpu); //Pull Accumulator
-    void PLP(MOS6502 *cpu); //Push Prcoessor Status
+    void PHA(MOS6502 *cpu, uint16_t address); //Push Accumulator
+    void PHP(MOS6502 *cpu, uint16_t address); //Push Processor Status
+    void PLA(MOS6502 *cpu, uint16_t address); //Pull Accumulator
+    void PLP(MOS6502 *cpu, uint16_t address); //Push Prcoessor Status
 
     void AND(MOS6502 *cpu, uint16_t address); //Logical AND
     void EOR(MOS6502 *cpu, uint16_t address); //Exclusive OR
     void ORA(MOS6502 *cpu, uint16_t address); //Logical Inclusive OR
     void BIT(MOS6502 *cpu, uint16_t address); //Bit test
 
-    void CLC(MOS6502 *cpu); //Clear carry flag
-    void CLD(MOS6502 *cpu); //Clear decimal mode flag
-    void CLI(MOS6502 *cpu); //Clear interrupt disable flag
-    void CLV(MOS6502 *cpu); //Clear overflow flag
-    void SEC(MOS6502 *cpu); //Set carry flag
-    void SED(MOS6502 *cpu); //Set decimal mode flag
-    void SEI(MOS6502 *cpu); //Set interrupt disable flags
+    void CLC(MOS6502 *cpu, uint16_t address); //Clear carry flag
+    void CLD(MOS6502 *cpu, uint16_t address); //Clear decimal mode flag
+    void CLI(MOS6502 *cpu, uint16_t address); //Clear interrupt disable flag
+    void CLV(MOS6502 *cpu, uint16_t address); //Clear overflow flag
+    void SEC(MOS6502 *cpu, uint16_t address); //Set carry flag
+    void SED(MOS6502 *cpu, uint16_t address); //Set decimal mode flag
+    void SEI(MOS6502 *cpu, uint16_t address); //Set interrupt disable flags
 
     void ADC(MOS6502 *cpu, uint16_t address); //Add with Carry
     void SBC(MOS6502 *cpu, uint16_t address); //Subtract with Carry
@@ -103,14 +103,13 @@
     void CPY(MOS6502 *cpu, uint16_t address); //Compare Y register
 
     void INC(MOS6502 *cpu, uint16_t address); //Increment a memory location
-    void INX(MOS6502 *cpu); //Increment the X register
-    void INY(MOS6502 *cpu); //Increment the Y register
+    void INX(MOS6502 *cpu, uint16_t address); //Increment the X register
+    void INY(MOS6502 *cpu, uint16_t address); //Increment the Y register
     void DEC(MOS6502 *cpu, uint16_t address); //Decrement a memory location
-    void DEX(MOS6502 *cpu); //Decrement the X register
-    void DEY(MOS6502 *cpu); //Decrement the Y register
+    void DEX(MOS6502 *cpu, uint16_t address); //Decrement the X register
+    void DEY(MOS6502 *cpu, uint16_t address); //Decrement the Y register
 
     void ASL(MOS6502 *cpu, uint16_t address); //Arithmetic Shift Left
-    void LSR(MOS6502 *cpu, uint16_t address); //Logical Shift Right
     void ROL(MOS6502 *cpu, uint16_t address); //Rotate Left
     void ROR(MOS6502 *cpu, uint16_t address); //Rotate Right
 
@@ -118,14 +117,14 @@
     void JSR(MOS6502 *cpu, uint16_t address); //Jump to subroutine
     void RTS(MOS6502 *cpu, uint16_t address); //Return from subroutine
 
-    bool BCC(MOS6502 *cpu); //Branch if carry flag clear
-    bool BCS(MOS6502 *cpu); //Branch if carry flag set
-    bool BEQ(MOS6502 *cpu); //Branch if zero flag set
-    bool BMI(MOS6502 *cpu); //Branch if negative flag set
-    bool BNE(MOS6502 *cpu); //Branch if zero flag clear
-    bool BPL(MOS6502 *cpu); //Branch if neagtive flag clear
-    bool BVC(MOS6502 *cpu); //Branch if overflow flag clear
-    bool BVS(MOS6502 *cpu); //Branch if overflow flag set
+    void BCC(MOS6502 *cpu); //Branch if carry flag clear
+    void BCS(MOS6502 *cpu); //Branch if carry flag set
+    void BEQ(MOS6502 *cpu); //Branch if zero flag set
+    void BMI(MOS6502 *cpu); //Branch if negative flag set
+    void BNE(MOS6502 *cpu); //Branch if zero flag clear
+    void BPL(MOS6502 *cpu); //Branch if neagtive flag clear
+    void BVC(MOS6502 *cpu); //Branch if overflow flag clear
+    void BVS(MOS6502 *cpu); //Branch if overflow flag set
 
     void BRK(MOS6502 *cpu, uint16_t address); //Force and interrupt
     void NOP(MOS6502 *cpu, uint16_t address); //No Operation

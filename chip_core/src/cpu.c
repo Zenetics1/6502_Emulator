@@ -1,5 +1,5 @@
-#include "include/cpu.h"
-#include "src/memory.c"
+#include "cpu.h"
+#include "memory.h"
 void CLOCK(MOS6502 *cpu){
     if(cpu->cycles_left == 0){
         cpu->IR = read_mem(cpu->PC++);
@@ -816,12 +816,7 @@ uint8_t ROL_0x2A(MOS6502 *cpu){ cpu->accumulator_mode=true; ROL(cpu,0); cpu->acc
 uint8_t LSR_0x4A(MOS6502 *cpu){ cpu->accumulator_mode=true; LSR(cpu,0); cpu->accumulator_mode=false; return 2; }
 uint8_t ROR_0x6A(MOS6502 *cpu){ cpu->accumulator_mode=true; ROR(cpu,0); cpu->accumulator_mode=false; return 2; }
 
-/* Branch Instructions
-   Relative_Mode reads the signed offset and returns the target PC address.
-   The void branch helpers set cpu->branch_result based on the flag condition.
-   NOTE: the void branch helpers are missing an 'else' clause — branch_result
-   is always overwritten to false after the if block.  Fix those helpers by
-   adding 'else' to each one so branching works correctly. */
+/* Branch Instructions*/
 uint8_t BPL_0x10(MOS6502 *cpu){
     uint16_t target = Relative_Mode(cpu);
     BPL(cpu);
@@ -932,9 +927,7 @@ uint8_t LDY_0xB4(MOS6502 *cpu){ LDY(cpu,Zero_PageX_Mode(cpu)); return 4; }
 uint8_t LDY_0xAC(MOS6502 *cpu){ LDY(cpu,Absolute_Mode(cpu)); return 4; }
 uint8_t LDY_0xBC(MOS6502 *cpu){ LDY(cpu,AbsoluteX_Mode(cpu)); return 4; }
 
-/* STA - store instructions have no page-crossing cycle penalty;
-   Absolute,X and Absolute,Y use Absolute_Mode + manual offset to avoid
-   the extra cycle that AbsoluteX/Y_Mode would add on page crossings */
+/* STA */
 uint8_t STA_0x85(MOS6502 *cpu){ STA(cpu,Zero_Page_Mode(cpu)); return 3; }
 uint8_t STA_0x95(MOS6502 *cpu){ STA(cpu,Zero_PageX_Mode(cpu)); return 4; }
 uint8_t STA_0x8D(MOS6502 *cpu){ STA(cpu,Absolute_Mode(cpu)); return 4; }

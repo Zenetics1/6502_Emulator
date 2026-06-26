@@ -1,3 +1,4 @@
+SHELL = /usr/bin/sh
 CC = gcc
 CFLAGS = -Wall -Wextra -O3
 INCLUDES = -Ichip_core/include
@@ -7,7 +8,7 @@ BIN_DIR = bin
 TEST_DIR = tests
 TARGET = $(BIN_DIR)/emulator
 
-SRCS = $(wildcard $(SRC_DIR)/*.c)
+SRCS = $(SRC_DIR)/main.c $(SRC_DIR)/cpu.c $(SRC_DIR)/memory.c
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 TEST_ROM_URL = https://github.com/Klaus2m5/6502_65C02_functional_tests/raw/master/bin_files/6502_functional_test.bin
@@ -24,13 +25,13 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 setup:
-	mkdir -p obj bin tests
+	-mkdir obj
+	-mkdir bin
+	-mkdir tests
 
 download_test: setup
-	@if [ ! -f $(TEST_ROM) ]; then \
-		echo "Downloading Klaus Dormann's 6502 functional test binary..."; \
-		curl -L -s $(TEST_ROM_URL) -o $(TEST_ROM); \
-	fi
+	@echo "Downloading Klaus Dormann's 6502 functional test binary..."
+	curl -L -s -o $(TEST_ROM) $(TEST_ROM_URL)
 
 test: all download_test
 	@echo "Launching emulator w/6502 functional test suite..."

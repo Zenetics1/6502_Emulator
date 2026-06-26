@@ -9,4 +9,6 @@ uint8_t read_mem(uint16_t addr);
 
 void write_mem(uint16_t addr, uint8_t value);
 
+int load_rom(const char *path);
+
 #endif
